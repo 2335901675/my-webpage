@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>线上健身平台</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        input {
+            margin-bottom: 15px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            text-align: center;
+            margin-top: 20px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>用户登录</h1>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="用户名" required>
+            <input type="password" id="password" placeholder="密码" required>
+            <button type="submit">登录</button>
+        </form>
+        <div style="text-align:center;margin-top:10px;">
+            <button id="registerBtn" style="background:#28a745;">用户注册</button>
+        </div>
+        <div id="registerModal" style="display:none;position:fixed;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.3);z-index:99;align-items:center;justify-content:center;">
+            <div style="background:#fff;padding:24px 32px;border-radius:8px;box-shadow:0 2px 8px #888;min-width:300px;position:relative;">
+                <h2 style="margin-top:0;">用户注册</h2>
+                <form id="registerForm">
+                    <input type="text" id="reg-username" placeholder="用户名" required style="width:100%;margin-bottom:12px;">
+                    <input type="password" id="reg-password" placeholder="密码" required style="width:100%;margin-bottom:12px;">
+                    <button type="submit" style="width:100%;background:#28a745;">注册</button>
+                </form>
+                <button id="closeRegister" style="position:absolute;right:8px;top:8px;background:none;border:none;font-size:20px;cursor:pointer;">×</button>
+                <div id="reg-message" style="margin-top:10px;color:#e53935;"></div>
+            </div>
+        </div>
+        <div class="message" id="message"></div>
+    </div>
+
+    <script>
+        document.getElementById('registerBtn').onclick = function() {
+            document.getElementById('registerModal').style.display = 'flex';
+        };
+
+        document.getElementById('closeRegister').onclick = function() {
+            document.getElementById('registerModal').style.display = 'none';
+            document.getElementById('reg-message').textContent = '';
+        };
+
+        document.getElementById('registerForm').onsubmit = function(e) {
+            e.preventDefault();
+            const regUser = document.getElementById('reg-username').value.trim();
+            const regPwd = document.getElementById('reg-password').value;
+            if (!regUser || !regPwd) {
+                document.getElementById('reg-message').textContent = '用户名和密码不能为空';
+                return;
+            }
+            let users = JSON.parse(localStorage.getItem('users') || '{}');
+            if (users[regUser]) {
+                document.getElementById('reg-message').textContent = '用户名已存在，请更换';
+                return;
+            }
+            users[regUser] = regPwd;
+            localStorage.setItem('users', JSON.stringify(users));
+            document.getElementById('reg-message').style.color = '#28a745';
+            document.getElementById('reg-message').textContent = '注册成功，请登录！';
+            setTimeout(() => {
+                document.getElementById('registerModal').style.display = 'none';
+                document.getElementById('reg-message').textContent = '';
+            }, 1200);
+        };
+
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            let users = JSON.parse(localStorage.getItem('users') || '{}');
+            if (users[username] && users[username] === password) {
+                document.getElementById('message').textContent = '登录成功！欢迎来到线上健身平台。';
+                document.getElementById('message').style.color = 'green';
+                // 跳转到主页面
+                window.location.href = '线上健身平台.html';
+            } else {
+                document.getElementById('message').textContent = '用户名或密码错误，请重试。';
+                document.getElementById('message').style.color = 'red';
+            }
+        });
+    </script>
+</body>
+</html>
