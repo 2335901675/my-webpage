@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>主页面</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #f9f9f9;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .top-container {
+            flex: 1;
+            background-color: #007BFF;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .nav-bar {
+            height: 60px;
+            background-color: #0056b3;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            color: white;
+            font-size: 18px;
+        }
+        .nav-bar div {
+            cursor: pointer;
+            padding: 10px 20px;
+            transition: background-color 0.3s ease;
+        }
+        .nav-bar div:hover {
+            background-color: #003d80;
+        }
+        .bottom-container {
+            flex: 5;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .ai-plan-form, .ai-correction {
+            display: none;
+        }
+        .social-section {
+            margin-top: 20px;
+        }
+        .social-section h3 {
+            margin-bottom: 10px;
+        }
+        .social-section .post {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-container">
+            <div class="logo">FitOnline 线上健身平台</div>
+        </div>
+        <div class="nav-bar">
+            <div id="nav-home">首页</div>
+            <div id="nav-plan">AI动态计划</div>
+            <div id="nav-correct">AI动作纠错</div>
+            <div id="nav-course">健身课程</div>
+            <div id="nav-coach">教练团队</div>
+            <div id="nav-social">社交广场</div>
+            <div id="nav-about">关于我们</div>
+        </div>
+        <div class="bottom-container" id="main-content">
+            <div class="content" id="home-content">
+                <h2>欢迎来到 FitOnline 线上健身创新平台</h2>
+                <p>这里为你提供AI智能健身计划、动作纠错、直播互动、健身交友、专业课程、教练指导等创新服务，助你科学高效健身！</p>
+                <p>全网首个零广告，免费AI出只适合你的健身计划！开始你的健身之旅把！</p>
+                <ul>
+                    <li>AI动态计划：根据你的身体数据和目标，智能生成个性化训练方案</li>
+                    <li>AI动作纠错：摄像头实时捕捉动作，AI语音提醒纠正，降低受伤风险</li>
+                    <li>健身课程：丰富的健身视频课程，满足不同健身需求</li>
+                    <li>教练团队：专业教练在线指导，答疑解惑</li>
+                    <li>社交广场：直播健身、结识好友、分享经验、互相鼓励</li>
+                    <li>关于我们：了解平台理念与团队</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const navItems = document.querySelectorAll('.nav-bar > div');
+            const bottomContainer = document.querySelector('.bottom-container');
+
+            const contentMap = {
+                '首页': `<div class="content">
+                    <h2>欢迎来到 FitOnline 线上健身创新平台</h2>
+                    <p>这里为你提供AI智能健身计划、动作纠错、直播互动、健身交友、专业课程、教练指导等创新服务，助你科学高效健身！</p>
+                    <ul>
+                        <li>AI动态计划：根据你的身体数据和目标，智能生成个性化训练方案</li>
+                        <li>AI动作纠错：摄像头实时捕捉动作，AI语音提醒纠正，降低受伤风险</li>
+                        <li>健身课程：丰富的健身视频课程，满足不同健身需求</li>
+                        <li>教练团队：专业教练在线指导，答疑解惑</li>
+                        <li>社交广场：直播健身、结识好友、分享经验、互相鼓励</li>
+                        <li>关于我们：了解平台理念与团队</li>
+                    </ul>
+                </div>`,
+                'AI动态计划': `<div class="content">
+                    <h2>AI动态计划</h2>
+                    <form id="ai-plan-form">
+                        <label>体重 (kg): <input type="number" id="weight" required></label><br>
+                        <label>体脂率 (%): <input type="number" id="bodyFat" required></label><br>
+                        <label>目标:
+                            <select id="goal" required>
+                                <option value="减脂">减脂</option>
+                                <option value="增肌">增肌</option>
+                                <option value="塑形">塑形</option>
+                            </select>
+                        </label><br>
+                        <label>每周训练天数: <input type="number" id="timePreference" required></label><br>
+                        <button type="button" id="generate-plan">生成训练计划</button>
+                    </form>
+                    <div id="ai-plan-result" style="margin-top: 20px;"></div>
+                </div>`,
+                'AI动作纠错': `<div class="content">
+                    <h2>AI动作纠错</h2>
+                    <p>开启摄像头，AI实时捕捉你的健身动作，对比标准姿势，语音提醒纠正（如“腰部需挺直”），降低运动损伤风险。</p>
+                    <button id="start-camera">开启摄像头</button>
+                    <div id="camera-status" style="margin-top:10px;"></div>
+                </div>`,
+                '健身课程': `<div class="content">
+                    <h2>健身课程</h2>
+                    <div style="display:flex;flex-wrap:wrap;gap:24px;">
+                        <div style="width:220px;background:#fafbfc;border-radius:8px;box-shadow:0 2px 8px #e0e0e0;padding:16px;display:flex;flex-direction:column;align-items:center;">
+                            <img src="image\\ranzhi.jpg" alt="燃脂有氧操" style="width:180px;height:120px;object-fit:cover;border-radius:6px;">
+                            <h3 style="margin:12px 0 6px 0;">燃脂有氧操</h3>
+                            <p style="font-size:14px;color:#666;">高效燃脂，提升心肺功能，适合所有健身人群。</p>
+                            <div style="color:#e53935;font-weight:bold;font-size:16px;margin:6px 0;">￥39.9</div>
+                            <button style="background:#007BFF;color:#fff;border:none;padding:6px 18px;border-radius:4px;cursor:pointer;">观看课程</button>
+                        </div>
+                        <div style="width:220px;background:#fafbfc;border-radius:8px;box-shadow:0 2px 8px #e0e0e0;padding:16px;display:flex;flex-direction:column;align-items:center;">
+                            <img src="image\\yaling.jpg" alt="哑铃增肌训练" style="width:180px;height:120px;object-fit:cover;border-radius:6px;">
+                            <h3 style="margin:12px 0 6px 0;">哑铃增肌训练</h3>
+                            <p style="font-size:14px;color:#666;">系统哑铃训练，助力肌肉增长，适合进阶健身者。</p>
+                            <div style="color:#e53935;font-weight:bold;font-size:16px;margin:6px 0;">￥49.9</div>
+                            <button style="background:#007BFF;color:#fff;border:none;padding:6px 18px;border-radius:4px;cursor:pointer;">观看课程</button>
+                        </div>
+                        <div style="width:220px;background:#fafbfc;border-radius:8px;box-shadow:0 2px 8px #e0e0e0;padding:16px;display:flex;flex-direction:column;align-items:center;">
+                            <img src="image\\hexin.jpg" alt="核心力量训练" style="width:180px;height:120px;object-fit:cover;border-radius:6px;">
+                            <h3 style="margin:12px 0 6px 0;">核心力量训练</h3>
+                            <p style="font-size:14px;color:#666;">强化核心，提升稳定性与运动表现，适合各阶段。</p>
+                            <div style="color:#e53935;font-weight:bold;font-size:16px;margin:6px 0;">￥45.0</div>
+                            <button style="background:#007BFF;color:#fff;border:none;padding:6px 18px;border-radius:4px;cursor:pointer;">观看课程</button>
+                        </div>
+                        <div style="width:220px;background:#fafbfc;border-radius:8px;box-shadow:0 2px 8px #e0e0e0;padding:16px;display:flex;flex-direction:column;align-items:center;">
+                            <img src="image\\lashen.jpg" alt="拉伸与放松" style="width:180px;height:120px;object-fit:cover;border-radius:6px;">
+                            <h3 style="margin:12px 0 6px 0;">拉伸与放松</h3>
+                            <p style="font-size:14px;color:#666;">全身拉伸，缓解疲劳，预防运动损伤，适合日常训练后。</p>
+                            <div style="color:#e53935;font-weight:bold;font-size:16px;margin:6px 0;">￥29.9</div>
+                            <button style="background:#007BFF;color:#fff;border:none;padding:6px 18px;border-radius:4px;cursor:pointer;">观看课程</button>
+                        </div>
+                    </div>
+                </div>`,
+                '教练团队': `<div class="content">
+                    <h2>教练团队</h2>
+                    <ul>
+                        <li>汤成举 - 国家一级健身教练，擅长增肌塑形</li>
+                        <li>田世强 - 国家一级健身教练，有氧与体重管理专家</li>
+                        <li>赵德旭 - 国家一级健身教练，康复与拉伸指导专家</li>
+                    </ul>
+                </div>`,
+                '社交广场': `<div class="content">
+                    <h2>社交广场</h2>
+                    <div class="social-section">
+                        <h3>直播区</h3>
+                        <button id="start-live">开启直播</button>
+                        <div id="live-status" style="margin:10px 0;"></div>
+                        <h3>健身动态</h3>
+                        <div class="post">魏佳玉：今天完成了30分钟HIIT训练，感觉棒极了！</div>
+                        <div class="post">侯俞辛：和好友一起晨跑，互相鼓励进步！</div>
+                        <form id="post-form">
+                            <input type="text" id="post-content" placeholder="分享你的健身动态..." required>
+                            <button type="submit">发布</button>
+                        </form>
+                        <div id="post-list"></div>
+                        <h3 style="margin-top:30px;">聊天大厅 · 成果分享</h3>
+                        <div id="hall-box" style="background:#eaf6ff;padding:10px;height:120px;overflow-y:auto;border-radius:5px;margin-bottom:10px;"></div>
+                        <form id="hall-form" style="display:flex;gap:10px;margin-bottom:20px;">
+                            <input type="text" id="hall-input" placeholder="在大厅分享你的训练成果..." style="flex:1;" required>
+                            <button type="submit">分享</button>
+                        </form>
+                        <h3>聊天室 · 交友互动</h3>
+                        <div id="chat-box" style="background:#f4f4f4;padding:10px;height:150px;overflow-y:auto;border-radius:5px;margin-bottom:10px;"></div>
+                        <form id="chat-form" style="display:flex;gap:10px;">
+                            <input type="text" id="chat-input" placeholder="输入聊天内容..." style="flex:1;" required>
+                            <button type="submit">发送</button>
+                        </form>
+                    </div>
+                </div>`,
+                '关于我们': `<div class="content">
+                    <h2>关于我们</h2>
+                    <p>FitOnline 致力于用AI和互联网技术创新健身体验，帮助更多人科学、便捷、快乐地健身。</p>
+                    <p>团队成员均为健身、AI、互联网领域的专业人士。</p>
+                    <h3 style="margin-top:30px;">联系我们</h3>
+                    <ul>
+                        <li>邮箱：2335901675@qq.com</li>
+                        <li>电话：13188185510</li>
+                    </ul>
+                    <h3>地址</h3>
+                    <p>辽宁省本溪市溪湖区香槐路176号 辽宁科技学院北校区</p>
+                    <h3>公司人员介绍</h3>
+                    <ul>
+                        <li>创  始  人：黄项楠</li>
+                        <li>技术负责人：韩东旭，赵德旭</li>
+                        <li>运营负责人：田世强，李宗臻，谭嘉跃</li>
+                        <li>设计负责人：贺涛，汤成举</li>
+                       
+                    </ul>
+                </div>`
+            };
+
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                    const selectedText = this.textContent.trim();
+                    const previousContent = bottomContainer.innerHTML;
+                    const newContent = contentMap[selectedText];
+                    if (newContent) {
+                        bottomContainer.innerHTML = newContent;
+                        // 动态功能绑定
+                        if (selectedText === 'AI动态计划') {
+                            document.getElementById('generate-plan').onclick = function() {
+                                const weight = document.getElementById('weight').value;
+                                const bodyFat = document.getElementById('bodyFat').value;
+                                const goal = document.getElementById('goal').value;
+                                const timePreference = document.getElementById('timePreference').value;
+                                if (weight && bodyFat && goal && timePreference) {
+                                    document.getElementById('ai-plan-result').innerHTML = `<pre>AI为你定制的${goal}训练计划：\n每周${timePreference}天训练，结合力量、有氧、核心和拉伸，科学高效达成目标！</pre>`;
+                                } else {
+                                    document.getElementById('ai-plan-result').innerHTML = '<p>请填写所有字段。</p>';
+                                }
+                            };
+                        } else if (selectedText === 'AI动作纠错') {
+                            document.getElementById('start-camera').onclick = function() {
+                                document.getElementById('camera-status').innerText = '（!）摄像头已开启，AI正在分析动作...';
+                            };
+                        } else if (selectedText === '社交广场') {
+                            document.getElementById('start-live').onclick = function() {
+                                document.getElementById('live-status').innerText = '（!）直播已开启，欢迎大家互动！';
+                            };
+                            document.getElementById('post-form').onsubmit = function(e) {
+                                e.preventDefault();
+                                const val = document.getElementById('post-content').value;
+                                if(val) {
+                                    const postList = document.getElementById('post-list');
+                                    const div = document.createElement('div');
+                                    div.className = 'post';
+                                    div.innerText = '你：' + val;
+                                    postList.prepend(div);
+                                    document.getElementById('post-content').value = '';
+                                }
+                            };
+                            document.getElementById('hall-form').onsubmit = function(e) {
+                                e.preventDefault();
+                                const hallInput = document.getElementById('hall-input').value;
+                                if(hallInput) {
+                                    const hallBox = document.getElementById('hall-box');
+                                    const div = document.createElement('div');
+                                    div.innerText = '你：' + hallInput;
+                                    hallBox.appendChild(div);
+                                    document.getElementById('hall-input').value = '';
+                                    hallBox.scrollTop = hallBox.scrollHeight;
+                                }
+                            };
+                            document.getElementById('chat-form').onsubmit = function(e) {
+                                e.preventDefault();
+                                const chatInput = document.getElementById('chat-input').value;
+                                if(chatInput) {
+                                    const chatBox = document.getElementById('chat-box');
+                                    const div = document.createElement('div');
+                                    div.innerText = '你：' + chatInput;
+                                    chatBox.appendChild(div);
+                                    document.getElementById('chat-input').value = '';
+                                }
+                            };
+                        }
+                    } else {
+                        alert('内容加载失败，返回上一个页面。');
+                        bottomContainer.innerHTML = previousContent;
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
